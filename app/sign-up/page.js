@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import { signIn } from "next-auth/react";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: {
@@ -85,12 +87,8 @@ export default function SignupClient() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 px-4">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-xl p-8"
-      >
+      <motion.div variants={fadeUp} initial="hidden" animate="visible" className="w-full max-w-md">
+        <Card className="p-8">
         <h1 className="text-2xl font-semibold text-neutral-100 text-center mb-6">
           Create Account
         </h1>
@@ -142,13 +140,9 @@ export default function SignupClient() {
             disabled={loading}
           />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-neutral-100 text-neutral-900 py-2.5 rounded-md font-medium hover:bg-white disabled:bg-neutral-400 transition"
-          >
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Creating account…" : "Sign Up"}
-          </button>
+          </Button>
         </form>
 
         {/* DIVIDER */}
@@ -159,19 +153,12 @@ export default function SignupClient() {
         </div>
 
         {/* GOOGLE */}
-        <button
-          onClick={handleGoogleSignup}
-          disabled={loading}
-          className="w-full border border-neutral-700 py-2.5 rounded-md text-neutral-300 hover:bg-neutral-800 transition"
-        >
+        <Button onClick={handleGoogleSignup} disabled={loading} variant="outline" className="w-full">
           Sign up with Google
-        </button>
-         <button
-        onClick={()=>router.push("/")}
-          className="w-full border mt-2 border-neutral-700 py-2.5 rounded-md text-neutral-300 hover:bg-neutral-800 transition"
-        >
+        </Button>
+        <Button onClick={() => router.push("/")} variant="ghost" className="w-full mt-2">
           Go to home
-        </button>
+        </Button>
 
         <p className="text-center text-sm text-neutral-400 mt-6">
           Already have an account?{" "}
@@ -186,6 +173,7 @@ export default function SignupClient() {
         <p className="text-center text-xs text-neutral-500 mt-4">
           By signing up, you agree to our Terms and Privacy Policy.
         </p>
+        </Card>
       </motion.div>
     </div>
   );

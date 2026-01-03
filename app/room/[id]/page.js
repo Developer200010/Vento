@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { io } from "socket.io-client";
+import AppShell from "@/components/AppShell";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 
 let socket;
 
@@ -254,10 +257,10 @@ export default function ChatRoomPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading chatroom...</p>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-950">
+        <div className="text-center text-neutral-400">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto"></div>
+          <p className="mt-4">Loading chatroom...</p>
         </div>
       </div>
     );
@@ -265,113 +268,62 @@ export default function ChatRoomPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-950">
         <div className="text-center">
           <div className="text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-          >
-            Back to Dashboard
-          </button>
+          <h2 className="text-2xl font-bold text-neutral-100 mb-2">Error</h2>
+          <p className="text-neutral-400 mb-6">{error}</p>
+          <Button onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.push("/dashboard")}
-                className="text-gray-600 hover:text-gray-900 text-xl"
-              >
-                ←
-              </button>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">
-                  {chatroom?.name}
-                </h1>
-                <p className="text-xs text-gray-500">
-                  👥 {chatroom?.memberCount} members • ⚡ Real-time
-                </p>
-              </div>
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
+      <AppShell
+        title={
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.push("/dashboard")} className="text-neutral-400 hover:text-neutral-200 text-xl">←</button>
+            <div>
+              <div className="text-lg font-semibold">{chatroom?.name}</div>
+              <p className="text-xs text-neutral-400">👥 {chatroom?.memberCount} members • ⚡ Real-time</p>
             </div>
-
-            <button
-              onClick={handleLeaveRoom}
-              className="text-sm text-red-600 hover:text-red-700 px-3 py-2 rounded-md hover:bg-red-50 transition"
-            >
-              Leave
-            </button>
           </div>
-        </div>
-      </header>
-
-      {/* Messages Area */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 overflow-y-auto">
+        }
+        right={<Button variant="danger" size="sm" onClick={handleLeaveRoom}>Leave</Button>}
+      >
+        {/* Messages Area */}
         {messages.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">💬</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No messages yet
-            </h3>
-            <p className="text-gray-600">Be the first to say something!</p>
+            <h3 className="text-xl font-semibold mb-2">No messages yet</h3>
+            <p className="text-neutral-400">Be the first to say something!</p>
           </div>
         ) : (
           <div className="space-y-4">
             {/* Expiration Warning */}
             {messages.length > 0 && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-                <p className="text-sm text-yellow-800">
-                  ⏱️ Messages expire in{" "}
-                  <strong>{getTimeUntilExpiration()}</strong>
+              <Card className="border-yellow-900/40 bg-yellow-950/40 p-3 text-center">
+                <p className="text-sm text-yellow-300">
+                  ⏱️ Messages expire in <strong>{getTimeUntilExpiration()}</strong>
                 </p>
-              </div>
+              </Card>
             )}
 
             {/* Messages */}
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.isOwn ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    msg.isOwn
-                      ? "bg-blue-600 text-white"
-                      : "bg-white border border-gray-200"
-                  }`}
-                >
+              <div key={msg.id} className={`flex ${msg.isOwn ? "justify-end" : "justify-start"}`}>
+                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.isOwn ? "bg-emerald-600 text-white" : "bg-neutral-900 border border-neutral-800"}`}>
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span
-                      className={`text-xs font-semibold ${
-                        msg.isOwn ? "text-blue-100" : "text-gray-900"
-                      }`}
-                    >
+                    <span className={`text-xs font-semibold ${msg.isOwn ? "text-emerald-100" : "text-neutral-200"}`}>
                       {msg.isOwn ? "You" : msg.username}
                     </span>
-                    <span
-                      className={`text-xs ${
-                        msg.isOwn ? "text-blue-200" : "text-gray-500"
-                      }`}
-                    >
+                    <span className={`text-xs ${msg.isOwn ? "text-emerald-100/70" : "text-neutral-500"}`}>
                       {formatTime(msg.createdAt)}
                     </span>
                   </div>
-                  <p
-                    className={`text-sm ${
-                      msg.isOwn ? "text-white" : "text-gray-800"
-                    }`}
-                  >
-                    {msg.text}
-                  </p>
+                  <p className={`text-sm ${msg.isOwn ? "text-white" : "text-neutral-200"}`}>{msg.text}</p>
                 </div>
               </div>
             ))}
@@ -379,8 +331,8 @@ export default function ChatRoomPage() {
             {/* Typing Indicator */}
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-gray-200 px-4 py-2 rounded-lg">
-                  <p className="text-sm text-gray-600">
+                <div className="bg-neutral-800 px-4 py-2 rounded-lg">
+                  <p className="text-sm text-neutral-300">
                     {typingUser} is typing
                     <span className="animate-pulse">...</span>
                   </p>
@@ -391,34 +343,28 @@ export default function ChatRoomPage() {
             <div ref={messagesEndRef} />
           </div>
         )}
-      </main>
 
-      {/* Message Input */}
-      <footer className="bg-white border-t sticky bottom-0">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <form onSubmit={handleSendMessage} className="flex gap-2">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={handleTyping}
-              placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={sending}
-              maxLength={1000}
-            />
-            <button
-              type="submit"
-              disabled={sending || !newMessage.trim()}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition font-medium"
-            >
-              {sending ? "..." : "Send"}
-            </button>
-          </form>
-          <p className="text-xs text-gray-500 mt-2 text-center">
-            ⚡ Real-time messaging • Messages expire after 2 hours
-          </p>
-        </div>
-      </footer>
+        {/* Message Input */}
+        <footer className="border-t border-neutral-800 sticky bottom-0 bg-neutral-950">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <form onSubmit={handleSendMessage} className="flex gap-2">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={handleTyping}
+                placeholder="Type your message..."
+                className="flex-1 px-4 py-2 bg-neutral-900 border border-neutral-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 placeholder-neutral-500 text-neutral-100"
+                disabled={sending}
+                maxLength={1000}
+              />
+              <Button type="submit" disabled={sending || !newMessage.trim()}>
+                {sending ? "..." : "Send"}
+              </Button>
+            </form>
+            <p className="text-xs text-neutral-500 mt-2 text-center">⚡ Real-time messaging • Messages expire after 2 hours</p>
+          </div>
+        </footer>
+      </AppShell>
     </div>
   );
 }

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { signIn, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 import { FiMail, FiLock } from "react-icons/fi";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -72,12 +74,8 @@ export default function LoginClient() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 px-4">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-xl p-8"
-      >
+      <motion.div variants={fadeUp} initial="hidden" animate="visible" className="w-full max-w-md">
+        <Card className="p-8">
         <h1 className="text-2xl font-semibold text-neutral-100 text-center mb-6">
           Welcome Back
         </h1>
@@ -108,13 +106,9 @@ export default function LoginClient() {
             disabled={loading}
           />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-neutral-100 text-neutral-900 py-2.5 rounded-md font-medium hover:bg-white disabled:bg-neutral-400 transition"
-          >
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Logging in…" : "Login"}
-          </button>
+          </Button>
         </form>
 
         {/* DIVIDER */}
@@ -148,6 +142,7 @@ export default function LoginClient() {
             Sign up
           </a>
         </p>
+        </Card>
       </motion.div>
     </div>
   );

@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import AppShell from "../../components/AppShell";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import { motion } from "framer-motion";
+
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -116,146 +121,97 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-950">
+        <div className="text-center text-neutral-400">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto"></div>
+          <p className="mt-4">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">📍</span>
-              <h1 className="text-xl font-bold text-gray-900">LocalChat</h1>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              {/* User Info */}
-              <div className="flex items-center gap-3">
-                {user?.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    alt={user.username}
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                    {user?.username?.[0]?.toUpperCase() || "U"}
-                  </div>
-                )}
-                <span className="text-sm font-medium text-gray-700 hidden sm:block">
-                  {user?.username}
-                </span>
+    <>
+      <AppShell
+      title="Dashboard"
+      right={
+        <>
+          <div className="hidden sm:flex items-center gap-3 mr-2">
+            {user?.profilePicture ? (
+              <img src={user.profilePicture} alt={user.username} className="w-8 h-8 rounded-full" />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-semibold">
+                {user?.username?.[0]?.toUpperCase() || "U"}
               </div>
-
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md hover:bg-gray-100 transition"
-              >
-                Logout
-              </button>
-            </div>
+            )}
+            <span className="text-sm text-neutral-300">{user?.username}</span>
           </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Button variant="outline" size="sm" onClick={handleLogout}>Logout</Button>
+        </>
+      }
+    >
         {/* Location Status */}
         {locationError ? (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-            <span className="text-red-600 text-xl">⚠️</span>
+          <Card className="border-red-900/40 bg-red-950/40" padding="p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-red-400 text-xl">⚠️</span>
             <div className="flex-1">
-              <p className="text-red-800 font-medium">Location Required</p>
-              <p className="text-red-600 text-sm mt-1">{locationError}</p>
-              <button
-                onClick={requestLocation}
-                className="mt-2 text-sm bg-red-600 text-white px-4 py-1 rounded-md hover:bg-red-700"
-              >
-                Enable Location
-              </button>
+              <p className="text-red-300 font-medium">Location Required</p>
+              <p className="text-red-400 text-sm mt-1">{locationError}</p>
+              <Button onClick={requestLocation} size="sm" variant="danger" className="mt-2">Enable Location</Button>
             </div>
           </div>
+        </Card>
         ) : location ? (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-            <span className="text-green-600 text-xl">✓</span>
+          <Card className="border-emerald-900/40 bg-emerald-950/40" padding="p-4">
+            <span className="text-emerald-400 text-xl">✓</span>
             <div>
-              <p className="text-green-800 font-medium">Location Enabled</p>
-              <p className="text-green-600 text-sm">
+              <p className="text-emerald-300 font-medium">Location Enabled</p>
+              <p className="text-emerald-400 text-sm">
                 Lat: {location.latitude.toFixed(4)}, Lon: {location.longitude.toFixed(4)}
               </p>
             </div>
-          </div>
+          </Card>
         ) : (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-            <span className="text-yellow-600 text-xl">⏳</span>
-            <p className="text-yellow-800">Detecting your location...</p>
-          </div>
+          <Card className="border-yellow-900/40 bg-yellow-950/40" padding="p-4">
+            <span className="text-yellow-400 text-xl">⏳</span>
+            <p className="text-yellow-300">Detecting your location...</p>
+          </Card>
         )}
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <button
-            onClick={() => setShowCreateModal(true)}
-            disabled={!location}
-            className="bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition shadow-md flex items-center justify-center gap-2"
-          >
+          <Button onClick={() => setShowCreateModal(true)} disabled={!location} className="w-full h-14">
             <span className="text-xl">+</span>
-            Create New Chatroom
-          </button>
-
-          <button
-            onClick={() => alert("Feature coming soon!")}
-            disabled={!location}
-            className="bg-white text-gray-700 px-6 py-4 rounded-lg font-semibold hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition shadow-md border border-gray-200 flex items-center justify-center gap-2"
-          >
+            <span className="ml-2">Create New Chatroom</span>
+          </Button>
+          <Button onClick={() => alert("Feature coming soon!")} disabled={!location} variant="outline" className="w-full h-14">
             <span className="text-xl">🔍</span>
-            Browse Nearby Chatrooms
-          </button>
+            <span className="ml-2">Browse Nearby Chatrooms</span>
+          </Button>
         </div>
 
         {/* Chatrooms Grid */}
-        <div className="mb-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Available Chatrooms
-          </h2>
-          <span className="text-sm text-gray-500">
-            {chatrooms.length} rooms found
-          </span>
+        <div className="mb-2 flex justify-between items-center">
+          <h2 className="text-2xl font-bold">Available Chatrooms</h2>
+          <span className="text-sm text-neutral-400">{chatrooms.length} rooms found</span>
         </div>
 
         {chatrooms.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm border p-12 text-center">
+          <Card className="p-12 text-center">
             <div className="text-6xl mb-4">💬</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold mb-2">
               No Chatrooms Nearby
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-neutral-400 mb-6">
               Be the first to create a chatroom in your area!
             </p>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              disabled={!location}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 transition"
-            >
-              Create Chatroom
-            </button>
-          </div>
+            <Button onClick={() => setShowCreateModal(true)} disabled={!location}>Create Chatroom</Button>
+          </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {chatrooms.map((room) => (
-              <div
-                key={room.id}
-                className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition"
-              >
+              <Card key={room.id} className="hover:border-emerald-500/40 transition">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-lg font-semibold text-gray-900">
                     {room.name}
@@ -271,72 +227,59 @@ export default function DashboardPage() {
                   👥 {room.memberCount} {room.memberCount === 1 ? "member" : "members"}
                 </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">
-                    by {room.createdBy}
-                  </span>
+                  <span className="text-xs text-neutral-400">by {room.createdBy}</span>
                   {room.isJoined ? (
-                    <button
-                      onClick={() => router.push(`/room/${room.id}`)}
-                      className="bg-green-600 text-white px-4 py-1 rounded text-sm hover:bg-green-700 transition"
-                    >
-                      Open
-                    </button>
+                    <Button onClick={() => router.push(`/room/${room.id}`)} size="sm" variant="outline">Open</Button>
                   ) : (
-                    <button
-                      onClick={() => handleJoinRoom(room.id)}
-                      className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 transition"
-                    >
-                      Join
-                    </button>
+                    <Button onClick={() => handleJoinRoom(room.id)} size="sm">Join</Button>
                   )}
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         )}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <Card className="p-6">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-100 rounded-full p-3">
+              <div className="bg-neutral-800 rounded-full p-3 border border-neutral-700">
                 <span className="text-2xl">💬</span>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Active Chats</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
+                <p className="text-sm text-neutral-400">Active Chats</p>
+                <p className="text-2xl font-bold">0</p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <Card className="p-6">
             <div className="flex items-center gap-3">
-              <div className="bg-green-100 rounded-full p-3">
+              <div className="bg-neutral-800 rounded-full p-3 border border-neutral-700">
                 <span className="text-2xl">👥</span>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Rooms Joined</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
+                <p className="text-sm text-neutral-400">Rooms Joined</p>
+                <p className="text-2xl font-bold">0</p>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <Card className="p-6">
             <div className="flex items-center gap-3">
-              <div className="bg-purple-100 rounded-full p-3">
+              <div className="bg-neutral-800 rounded-full p-3 border border-neutral-700">
                 <span className="text-2xl">📨</span>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Messages Sent</p>
-                <p className="text-2xl font-bold text-gray-900">0</p>
+                <p className="text-sm text-neutral-400">Messages Sent</p>
+                <p className="text-2xl font-bold">0</p>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
-      </main>
+      </AppShell>
 
-      {/* Create Chatroom Modal */}
-      {showCreateModal && (
+     {showCreateModal && (
         <CreateChatroomModal
           location={location}
           onClose={() => setShowCreateModal(false)}
@@ -346,8 +289,8 @@ export default function DashboardPage() {
           }}
         />
       )}
-    </div>
-  );
+   </>
+ );
 }
 
 // Create Chatroom Modal Component
@@ -380,7 +323,6 @@ function CreateChatroomModal({ location, onClose, onCreated }) {
 
       if (res.ok) {
         onCreated(data.chatroom);
-        fetchNearbyChatrooms(); // Refresh the list
       } else {
         setError(data.error || "Failed to create chatroom");
       }
@@ -392,34 +334,32 @@ function CreateChatroomModal({ location, onClose, onCreated }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-6 shadow-2xl"
+      >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Create Chatroom</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
-          >
-            ×
-          </button>
+          <h2 className="text-xl font-semibold text-neutral-100">Create Chatroom</h2>
+          <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">✕</Button>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-950/40 border border-red-900/50 text-red-300 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Chatroom Name
-            </label>
+            <label className="block text-sm font-medium text-neutral-300 mb-1">Chatroom Name</label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-md bg-neutral-950 border border-neutral-800 text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-emerald-600"
               placeholder="e.g., Coffee Shop Chat"
               required
               disabled={loading}
@@ -427,13 +367,11 @@ function CreateChatroomModal({ location, onClose, onCreated }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Radius (kilometers)
-            </label>
+            <label className="block text-sm font-medium text-neutral-300 mb-1">Radius (kilometers)</label>
             <select
               value={formData.radius}
               onChange={(e) => setFormData({ ...formData, radius: e.target.value })}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-md bg-neutral-950 border border-neutral-800 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-emerald-600"
               disabled={loading}
             >
               <option value="0.5">0.5 km (500m)</option>
@@ -443,36 +381,19 @@ function CreateChatroomModal({ location, onClose, onCreated }) {
               <option value="10">10 km</option>
               <option value="20">20 km</option>
             </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Only users within this radius can join
-            </p>
+            <p className="text-xs text-neutral-500 mt-1">Only users within this radius can join</p>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-            <p className="text-sm text-blue-800">
-              📍 Your location: {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-            </p>
-          </div>
+          <Card className="p-3 border-neutral-800 bg-neutral-900">
+            <p className="text-sm text-neutral-300">📍 Your location: {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}</p>
+          </Card>
 
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition"
-              disabled={loading}
-            >
-              {loading ? "Creating..." : "Create"}
-            </button>
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose} disabled={loading}>Cancel</Button>
+            <Button type="submit" className="flex-1" disabled={loading}>{loading ? "Creating..." : "Create"}</Button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
